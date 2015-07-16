@@ -8,7 +8,7 @@ from ..ccsgp.utils import getOpts
 from ..ccsgp.config import default_colors
 
 def gp_isotherms(guest, struc):
-  """example for plotting from a text file via numpy.loadtxt
+  """example for plotting from a comma separated file via pandas.read_csv
 
   1. prepare input/output directories
   2. load the data into an OrderedDict() [adjust axes units]
@@ -19,7 +19,7 @@ def gp_isotherms(guest, struc):
   Below is an output image for country initial T and the 4 most populated
   countries for this initial (click to enlarge). Also see::
 
-    $ python -m ccsgp_get_started.examples.gp_datdir -h
+    $ python -m ccsgp_get_started.isoplots.gp_isotherms -h
 
   for help on the command line options.
 
@@ -37,9 +37,7 @@ def gp_isotherms(guest, struc):
   :ivar outDir: output directory according to package structure
   :ivar data: OrderedDict with datasets to plot as separate keys
   :ivar file: data input file for specific country, format: [x y] OR [x y dx dy]
-  :ivar country: country, filename stem of input file
   :ivar file_url: absolute url to input file
-  :ivar nSets: number of datasets
   """
   # prepare input/output directories
   inDir, outDir = getWorkDirs()
