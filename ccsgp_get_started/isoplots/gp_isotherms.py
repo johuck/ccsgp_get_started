@@ -61,8 +61,7 @@ def gp_isotherms(guest, struc):
     data = OrderedDict()
     data[struc_name] = df[df[struc_name]>0.].as_matrix(columns=['Pressure',
       struc_name]) # load data
-    logging.debug(data) # shown if --log flag given on command line
-     generate plot using ccsgp.make_plot
+    logging.debug(data) # shown if --log flag given on command line generate plot using ccsgp.make_plot
     make_plot(
       data = data.values(),
       properties = [ 'lt 1 lw 4 ps 1.7 lc %s pt 18' % default_colors[(int(guest ==
