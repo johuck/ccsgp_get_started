@@ -43,7 +43,7 @@ def gp_isotherms(guest, struc):
   inDir, outDir = getWorkDirs()
   inDir = os.path.join(inDir, guest)
   outDir = os.path.join(outDir, guest, struc)
-  if not os.path.exists(inDir): # catch missing initial
+  if not os.path.exists(inDir): # catch missing guest
     return "guest %s doesn't exist" % guest
   # prepare data
   file_name = os.path.join(inDir, '{}_{}.csv'.format(struc, guest))
@@ -53,25 +53,27 @@ def gp_isotherms(guest, struc):
     if istruc == 0 or istruc == 1: continue
     if not struc_name.startswith('TBM_'): continue
     struc_std = df.columns[istruc+1]
+    data_file = df[['Pressure', struc_name, struc_std]]
+    struc_net = struc_name.split('_')
+    DataOutDir = os.path.join(inDir, struc)
+    data_file.to_csv('{}/{}_{}.csv'.format(DataOutDir, struc, struc_net[2]) , sep=' ', columns=('Pressure', struc_name,
+                                                   struc_std), header=None, index=None)
     data = OrderedDict()
     data[struc_name] = df[df[struc_name]>0.].as_matrix(columns=['Pressure',
-      struc_name, struc_std]) # load data
-    #logging.debug(data) # shown if --log flag given on command line
-    # generate plot using ccsgp.make_plot
-    #make_plot(
-    #  data = data.values(),
-    #  properties = [ 'lt 1 lw 4 ps 1.7 lc %s pt 18' % default_colors[(int(guest ==
-    #                                                                    'N2'))] ],
-    #  titles = [ key.replace('_', ' ') for key in data.keys()], # use data keys as legend titles
-    #  name = os.path.join(outDir, '{}'.format(struc_name)),
-    #  xlog = True, ylog = True,
-    #  key = [ 'top left', 'nobox' ],
-    #  ylabel = '{} loading in (kg/mol)'.format(guest),
-    #  xlabel = 'pressure in (Pa)', rmargin = 0.99, tmargin = 0.95, size='8.5in,8in'
-    #)
-    data = pd.DataFrame(data)
-    data.pd.DataFrame.to_csv(path_or_buf=struc_name, sep=' ',columns=3)
-    break
+      struc_name]) # load data
+    logging.debug(data) # shown if --log flag given on command line
+     generate plot using ccsgp.make_plot
+    make_plot(
+      data = data.values(),
+      properties = [ 'lt 1 lw 4 ps 1.7 lc %s pt 18' % default_colors[(int(guest ==
+                                                                        'N2'))] ],
+      titles = [ key.replace('_', ' ') for key in data.keys()], # use data keys as legend titles
+      name = os.path.join(outDir, '{}'.format(struc_name)),
+      xlog = True, ylog = True,
+      key = [ 'top left', 'nobox' ],
+      ylabel = '{} loading in (kg/mol)'.format(guest),
+      xlabel = 'pressure in (Pa)', rmargin = 0.99, tmargin = 0.95, size='8.5in,8in'
+    )
   return 'done'
 
 if __name__ == '__main__':
