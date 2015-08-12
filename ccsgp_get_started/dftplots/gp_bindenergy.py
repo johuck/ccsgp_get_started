@@ -44,9 +44,9 @@ def gp_bindenergy(guest):
     return "guest %s doesn't exist" % guest
   # prepare data
   dpt_dict = OrderedDict()
-  if 'CO2' in guest: key = '(a)'
-  elif 'CH4' in guest: key = '(b)'
-  else: key = '(a)'
+  if 'CO2' in guest: key = '(a) CO_2'
+  elif 'CH4' in guest: key = '(b) CH_4'
+  else: key = '(c) H_{2}O'
   dpt_dict[key] = [[], [], []] #dpt
   # exp-data
   exp_filename = os.path.join(inDir,'experiments.dat')
@@ -118,7 +118,7 @@ def gp_bindenergy(guest):
           'xtics ("Mg"1, "Mn"2, "Fe"3, "Co"4, "Ni"5, "Cu"6, "Zn"7)',
       ] + exp_data_gpcalls,
       name = os.path.join(outDir, guest), yreverse = (not isM),
-      key = [ 'at graph 1.02, 1.17', 'maxrows 2', 'width -1.1', 'nobox' ],
+      key = [ 'at graph 1.02, 1.17', 'maxrows 2', 'width -2.1', 'nobox' ],
       ylabel = ylabel, xlabel = 'metals', rmargin = 0.99,
       tmargin = 0.93 if guest != 'M-O_H2O_relax' and use_exp_data else 0.88,
       size='7in,5.5in' if guest != 'M-O_H2O_relax' and use_exp_data else '4in,5.5in',
