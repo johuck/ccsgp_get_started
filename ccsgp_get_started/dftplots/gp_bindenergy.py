@@ -58,10 +58,10 @@ def gp_bindenergy(guest):
         exp_data = np.array([exp_data])
     if isM: exp_data[:,1] /= 10.
   yfake = -5 if use_exp_data else -40
-  if isM: yfake = 1
+  if isM: yfake = 0.1
   dpt_dict[key][0].append(np.array([[1,yfake]]))
   dpt_dict[key][1].append(
-    'with boxes lt -1 lc {}'.format(default_colors[-10]) if use_exp_data else \
+    'with boxes lt -1 lc {}'.format(default_colors[-1]) if use_exp_data else \
     'with lines lc rgb "white"'
   )
   dpt_dict[key][2].append('experiments' if use_exp_data else ' ')
@@ -104,7 +104,7 @@ def gp_bindenergy(guest):
   # generate plot using ccsgp.make_panel
   exp_data_gpcalls = [
     'arrow {} from {},{} to {},{} lw 4 lc {} nohead front'.format(
-      i+5, dp[0]-nfiles*dx/2., dp[1], dp[0]+nfiles*dx/2., dp[1], default_colors[-10]
+      i+5, dp[0]-nfiles*dx/2., dp[1], dp[0]+nfiles*dx/2., dp[1], default_colors[-1]
     ) for i,dp in enumerate(exp_data)
   ] if use_exp_data else []
   guest_split = guest.split('_')
