@@ -48,10 +48,14 @@ def gp_datdir(gas, mats):
     return "gas composition %s doesn't exist" % gas
   # prepare data
   data = OrderedDict()
+  iza = OrderedDict()
   mea = OrderedDict() 
   if 'all' in mats:
       for classes in os.listdir(inDir):
+        if classes == 'IZA.csv': continue
         if classes == 'MEA.csv': continue
+        if classes == 'COP-20-exp.csv': continue
+        if classes == 'COFs.csv': continue
         namemats = os.path.splitext(classes)[0]
         file_url = os.path.join(inDir, classes)
         print classes, namemats, file_url
@@ -60,6 +64,14 @@ def gp_datdir(gas, mats):
         data_import[:,1] /= 1e3
         data[namemats]=data_import
       print data
+  data_import = np.genfromtxt(os.path.join(inDir, 'COFs.csv'), delimiter=' ', dtype=None,
+                                    usecols=(1,2)) # load COF data
+  data_import[:,1] /= 1e3
+  data['COFs'] = data_import
+  iza_import = np.genfromtxt(os.path.join(inDir, 'IZA.csv'), delimiter=' ', dtype=None,
+                                    usecols=(1,2)) # load IZA data
+  iza_import[:,1] /= 1e3
+  iza['IZA'] = iza_import
   mea_import = np.genfromtxt(os.path.join(inDir, 'MEA.csv'), delimiter=' ', dtype=None,
                                     usecols=(1,2)) # load MEA data
   mea_import[:,1] /= 1e3
@@ -69,12 +81,11 @@ def gp_datdir(gas, mats):
   logging.debug(data) # shown if --log flag given on command line
   # generate plot using ccsgp.make_plot
   make_plot(
-    data = mea.values() + data.values(),
-    properties = [ 'with lines lc -1 lw 4 lt 1' ] + [ getOpts(i) for i in
-                                                   xrange(nSets) ],
-    titles = [ 'current MEA' ] + data.keys(), # use data keys as legend titles
-    name = os.path.join(outDir, gas),
-    key = [ 'at graph 1.05, 1.24', 'maxrows 3', 'width -2.0', 'nobox' ],
+    data = iza.values() + mea.values() +data.values(),
+    properties = [ 'with lines lc -1 lw 4 lt 1' ] + [ 'with lines lc {} lw 4 lt 1'.format(default_colors[-10]) ] + [ 'with points lw 4 pt 18 ps 1.9 lt 2 lc %s' % my_color_set[i] for i in xrange(nSets) ],
+    titles = [ 'IZA line' ] + [ 'MEA' ] + data.keys(), # use data keys as legend titles
+    name = os.path.join(outDir, gas), #gp_calls = [ 'format y %f' ],
+    key = [ 'at graph 1.15, 1.24', 'maxrows 3', 'width -3.0', 'nobox' ],
     ylabel = 'parasitic energy ({/Symbol \664} 10^{3} kJ/kg CO_2)',
     xlabel = 'Henry coefficient at 300K (mol/kg/Pa)', xlog = True, ylog = True,
       xr = [1e-6,1e0], tmargin = 0.83, rmargin = 0.96, size='9.5in,8in'
