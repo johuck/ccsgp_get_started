@@ -6,7 +6,7 @@ from ..examples.utils import getWorkDirs
 from ..ccsgp.utils import getOpts
 from ..ccsgp.config import default_colors
 
-def gp_datdir(gas, mats):
+def gp_pe(gas, mats):
   """example for plotting from a text file via numpy.loadtxt
 
   1. prepare input/output directories
@@ -102,4 +102,4 @@ if __name__ == '__main__':
   logging.basicConfig(
     format='%(message)s', level=getattr(logging, loglevel)
   )
-  print gp_datdir(args.gas, args.mats)
+  print gp_pe(args.gas, args.mats)
