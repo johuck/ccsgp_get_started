@@ -76,8 +76,8 @@ def gp_datdir(gas, mats):
                                     usecols=(1,2)) # load MEA data
   mea_import[:,1] /= 1e3
   mea['MEA'] = mea_import
-  nSets = len(os.listdir(inDir))-1
-  print data, mea, nSets
+  nSets = len(os.listdir(inDir))-3
+  print data, iza, nSets
   logging.debug(data) # shown if --log flag given on command line
   # generate plot using ccsgp.make_plot
   make_plot(
