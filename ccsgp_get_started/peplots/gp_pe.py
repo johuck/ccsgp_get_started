@@ -4,6 +4,7 @@ from collections import OrderedDict
 from ..ccsgp.ccsgp import make_plot
 from ..examples.utils import getWorkDirs
 from ..ccsgp.utils import getOpts
+from ..ccsgp.config import default_colors
 
 def gp_datdir(gas, mats):
   """example for plotting from a text file via numpy.loadtxt
@@ -37,6 +38,8 @@ def gp_datdir(gas, mats):
   :ivar file_url: absolute url to input file
   :ivar nSets: number of datasets
   """
+  # prepare color arrays for dataset
+  my_color_set = [default_colors[i] for i in range(0, 3)] + [default_colors[6]] + [default_colors[i] for i in range(4, 6)] + [default_colors[3]] + [default_colors[7]]
   # prepare input/output directories
   inDir, outDir = getWorkDirs()
   inDir = os.path.join(inDir, gas)
@@ -74,7 +77,7 @@ def gp_datdir(gas, mats):
     key = [ 'at graph 1.05, 1.24', 'maxrows 3', 'width -2.0', 'nobox' ],
     ylabel = 'parasitic energy ({/Symbol \664} 10^{3} kJ/kg CO_2)',
     xlabel = 'Henry coefficient at 300K (mol/kg/Pa)', xlog = True, ylog = True,
-      tmargin = 0.83, rmargin = 0.96, size='9.5in,8in'
+      xr = [1e-6,1e0], tmargin = 0.83, rmargin = 0.96, size='9.5in,8in'
   )
   return 'done'
 
