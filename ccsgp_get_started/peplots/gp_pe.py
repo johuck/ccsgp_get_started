@@ -41,8 +41,8 @@ def gp_pe(gas, mats):
   # prepare color arrays for dataset
   my_color_set = [default_colors[i] for i in range(0, 3)] + [default_colors[6]] + [default_colors[i] for i in range(4, 6)] + [default_colors[3]] + [default_colors[7]]
   # prepare input/output directories
-  inDir, outDir = getWorkDirs()
-  inDir = os.path.join(inDir, gas)
+  inDirMEA, outDir = getWorkDirs()
+  inDir = os.path.join(inDirMEA, gas)
   print inDir
   if not os.path.exists(inDir): # catch missing gas
     return "gas composition %s doesn't exist" % gas
@@ -64,15 +64,16 @@ def gp_pe(gas, mats):
         data_import[:,1] /= 1e3
         data[namemats]=data_import
       print data
-  data_import = np.genfromtxt(os.path.join(inDir, 'COFs.csv'), delimiter=' ', dtype=None,
-                                    usecols=(1,2)) # load COF data
-  data_import[:,1] /= 1e3
-  data['COFs'] = data_import
-  mea_import = np.genfromtxt(os.path.join(inDir, 'MEA.csv'), delimiter=' ', dtype=None,
-                                    usecols=(1,2)) # load IZA data
+  if 'COFs.csv' in os.listdir(inDir):
+      data_import = np.genfromtxt(os.path.join(inDir, 'COFs.csv'), delimiter=' ', dtype=None,
+                                        usecols=(1,2)) # load COF data
+      data_import[:,1] /= 1e3
+      data['COFs'] = data_import
+  mea_import = np.genfromtxt(os.path.join(inDirMEA, 'MEA.csv'), delimiter=' ', dtype=None,
+                                    usecols=(1,2)) # load MEA data
   mea_import[:,1] /= 1e3
   mea['MEA'] = mea_import
-  nSets = len(os.listdir(inDir))-3
+  nSets = len(os.listdir(inDir))
   logging.debug(data) # shown if --log flag given on command line
   # generate plot using ccsgp.make_plot
   make_plot(
@@ -80,10 +81,10 @@ def gp_pe(gas, mats):
     properties = [ 'with lines lc {} lw 4 lt 1'.format(default_colors[-10]) ] + [ 'with points lw 4 pt 18 ps 1.9 lt 2 lc %s' % my_color_set[i] for i in xrange(nSets) ],
     titles = [ 'MEA' ] + data.keys(), # use data keys as legend titles
     name = os.path.join(outDir, gas), #gp_calls = [ 'format y %f' ],
-    key = [ 'at graph 1.03, 1.24', 'maxrows 3', 'width -3.0', 'nobox' ],
+    key = [ 'at graph 0.92, 1.24', 'maxrows 3', 'width 1.0', 'nobox' ],
     ylabel = 'parasitic energy ({/Symbol \664} 10^{3} kJ/kg CO_2)',
     xlabel = 'Henry coefficient at 300K (mol/kg/Pa)', xlog = True, ylog = True,
-      xr = [1e-6,1e-1], tmargin = 0.83, rmargin = 0.96, size='9.5in,8in'
+      xr = [1e-7,1e-4], yr = [0.8,10.0], lmargin = 0.14, tmargin = 0.83, rmargin = 0.96, size='9.5in,8in'
   )
   return 'done'
 
