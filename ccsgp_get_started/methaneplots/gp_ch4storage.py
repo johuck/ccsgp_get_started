@@ -42,36 +42,66 @@ def gp_ch4storage(prop, mats):
   data = OrderedDict()
   mea = OrderedDict() 
   if 'all' in mats:
-      for classes in ['zeolites.csv', 'ZIFs.csv', 'PPNs.csv', 'MOFs.csv',
-                      'expMOFs.csv', 'COFs.csv']:
-        if classes == 'COFs.csv': continue
-        if classes == 'expMOFs.csv': continue
+      for classes in os.listdir(inDir):
         namemats = os.path.splitext(classes)[0]
         file_url = os.path.join(inDir, classes)
-        data_import = np.genfromtxt(file_url, delimiter=' ', dtype=None,
-                                    usecols=(2,1)) # load data
-        data[namemats]=data_import
-  data_import = np.genfromtxt(os.path.join(inDir, 'expMOFs.csv'), delimiter=' ', dtype=None,
-                                    usecols=(2,1)) # load COF data
-  data['expt\'l MOFs'] = data_import
-  #data_import = np.genfromtxt(os.path.join(inDir, 'COFs.csv'), delimiter=' ', dtype=None,
-  #                                  usecols=(2,1)) # load COF data
-  #data['COFs'] = data_import
+        if prop == 'di':
+            if classes == 'COFs.csv': continue
+            if classes == 'expMOFs.csv': continue
+            data_import = np.genfromtxt(file_url, delimiter=' ', dtype=None,
+                                    usecols=(1,2)) # load data
+            data[namemats]=data_import
+            xlabel = 'diameter of largest included sphere ({/E \305})'
+            xr = [0.0, 80]
+            yr = [0.0, 200]
+            key = [ 'top right', 'width -0.5']
+            xlog = False
+        elif prop == 'asa':
+            data_import = np.genfromtxt(file_url, delimiter=' ', dtype=None,
+                                    usecols=(1,2)) # load data
+            data_import[:,0] /= 1e3
+            data[namemats]=data_import
+            xlabel = 'accessible surface area ({/Symbol \664} 10^{3} m^2/cm^3)'
+            xr = [0.0, 3.5]
+            yr = [0.0, 200]
+            key = [ 'top left', 'width 0.5']
+            xlog = False
+        elif prop == 'vf':
+            data_import = np.genfromtxt(file_url, delimiter=' ', dtype=None,
+                                    usecols=(1,2)) # load data
+            data[namemats]=data_import
+            xlabel = 'void fraction'
+            xr = [0.0, 1.0]
+            yr = [0.0, 200]
+            key = [ 'top left', 'width 0.5']
+            xlog = False
+        else:
+            data_import = np.genfromtxt(file_url, delimiter=' ', dtype=None,
+                                    usecols=(1,2)) # load data
+            data_import[:,0] *= 1e3
+            data[namemats]=data_import
+            xlabel = 'crystal density (kg/m^3)'
+            xr = [0.0, 2000]
+            yr = [0.0, 200]
+            key = [ 'top right', 'width 0.5']
+            xlog = False
+  if prop == 'di':
+      data_import = np.genfromtxt(os.path.join(inDir, 'expMOFs.csv'), delimiter=' ', dtype=None,
+                                        usecols=(1,2)) # load COF data
+      data['expt\'l MOFs'] = data_import
+      data_import = np.genfromtxt(os.path.join(inDir, 'COFs.csv'), delimiter=' ', dtype=None,
+                                        usecols=(1,2)) # load COF data
+      data['COFs'] = data_import
   nSets = len(os.listdir(inDir))
-  if prop =='di':
-      xlabel = 'diameter of largest included sphere ()'
-      xr = [0.0, 80]
-      yr = [0.0, 200]
-      key = [ 'top right', 'width -0.5']
-      xlog = False
   logging.debug(data) # shown if --log flag given on command line
   # generate plot using ccsgp.make_plot
   make_plot(
     data = data.values(),
-    properties =  [ 'with points pt 18 ps 0.9 lc %s' % my_color_set[i] for i in xrange(nSets) ],
+    properties =  [ 'with points pt 18 ps 0.5 lc %s' % my_color_set[i] for i in xrange(nSets) ],
     titles = data.keys(), # use data keys as legend titles
     name = os.path.join(outDir, prop), #gp_calls = [ 'format y %f' ],
     key = key,
+      lines = {'x=59.2': 'lc {} lw 4 lt 1'.format(default_colors[-10])},
     ylabel = 'deliverable capacity (v STP/v)',
     xlabel = xlabel, xlog = xlog, ylog = False, xr = xr, yr = yr, rmargin = 0.97, lmargin = 0.15, bmargin = 0.14, size='9.5in,8in'
   )
