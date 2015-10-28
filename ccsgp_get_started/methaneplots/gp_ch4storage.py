@@ -32,7 +32,7 @@ def gp_ch4storage(prop, mats):
   :ivar nSets: number of datasets
   """
   # prepare color arrays for dataset
-  my_color_set = [default_colors[i] for i in range(0, 3)] + [default_colors[6]] + [default_colors[i] for i in range(4, 6)] + [default_colors[3]] + [default_colors[7]]
+  my_color_set = [default_colors[i] for i in range(0, 3)] + [default_colors[6]] + [default_colors[i] for i in range(4, 5)] + [default_colors[3]] + [default_colors[5]] + [default_colors[7]]
   # prepare input/output directories
   inDirMEA, outDir = getWorkDirs()
   inDir = os.path.join(inDirMEA, prop)
@@ -46,17 +46,23 @@ def gp_ch4storage(prop, mats):
         namemats = os.path.splitext(classes)[0]
         file_url = os.path.join(inDir, classes)
         if prop == 'di':
-            if classes == 'COFs.csv': continue
+            #if classes == 'COFs.csv': continue
             if classes == 'expMOFs.csv': continue
+            if classes == 'newCOFs.csv': continue
+            if classes == 'ZIFs.csv': continue
+            if classes == 'MOFs.csv': continue
+            if classes == 'PPNs.csv': continue
+            if classes == 'zeolites.csv': continue
             data_import = np.genfromtxt(file_url, delimiter=' ', dtype=None,
                                     usecols=(1,2)) # load data
             data[namemats]=data_import
             xlabel = 'diameter of largest included sphere ({/E \305})'
-            xr = [0.0, 80]
+            xr = [0.0, 70]
             yr = [0.0, 200]
-            key = [ 'top right', 'width -0.5']
+            key = [ 'top right', 'width -1.5']
             xlog = False
         elif prop == 'asa':
+            if classes == 'newCOFs.csv': continue
             data_import = np.genfromtxt(file_url, delimiter=' ', dtype=None,
                                     usecols=(1,2)) # load data
             data_import[:,0] /= 1e3
@@ -64,40 +70,47 @@ def gp_ch4storage(prop, mats):
             xlabel = 'accessible surface area ({/Symbol \664} 10^{3} m^2/cm^3)'
             xr = [0.0, 3.5]
             yr = [0.0, 200]
-            key = [ 'top left', 'width 0.5']
+            key = [ 'top left', 'width -1.5']
             xlog = False
         elif prop == 'vf':
+            if classes == 'newCOFs.csv': continue
             data_import = np.genfromtxt(file_url, delimiter=' ', dtype=None,
                                     usecols=(1,2)) # load data
             data[namemats]=data_import
             xlabel = 'void fraction'
             xr = [0.0, 1.0]
             yr = [0.0, 200]
-            key = [ 'top left', 'width 0.5']
+            key = [ 'bottom right', 'width -1.5']
             xlog = False
         else:
+            if classes == 'newCOFs.csv': continue
             data_import = np.genfromtxt(file_url, delimiter=' ', dtype=None,
                                     usecols=(1,2)) # load data
-            data_import[:,0] *= 1e3
+            #data_import[:,0] *= 1e3
             data[namemats]=data_import
-            xlabel = 'crystal density (kg/m^3)'
-            xr = [0.0, 2000]
+            xlabel = 'crystal density ({/Symbol \664} 10^{3} kg/m^3)'
+            xr = [0.0, 2.000]
             yr = [0.0, 200]
-            key = [ 'top right', 'width 0.5']
+            key = [ 'top right', 'width -1.5']
             xlog = False
-  if prop == 'di':
-      data_import = np.genfromtxt(os.path.join(inDir, 'expMOFs.csv'), delimiter=' ', dtype=None,
+  #if prop == 'di':
+      #data_import = np.genfromtxt(os.path.join(inDir, 'expMOFs.csv'), delimiter=' ', dtype=None,
+      #                                  usecols=(1,2)) # load COF data
+      #data['expt\'l MOFs'] = data_import
+      #data_import = np.genfromtxt(os.path.join(inDir, 'COFs.csv'), delimiter=' ', dtype=None,
+      #                                  usecols=(1,2)) # load COF data
+      #data['COFs'] = data_import
+      data_import = np.genfromtxt(os.path.join(inDir, 'newCOFs.csv'), delimiter=' ', dtype=None,
                                         usecols=(1,2)) # load COF data
-      data['expt\'l MOFs'] = data_import
-      data_import = np.genfromtxt(os.path.join(inDir, 'COFs.csv'), delimiter=' ', dtype=None,
-                                        usecols=(1,2)) # load COF data
-      data['COFs'] = data_import
+      data_import[:,0] /= 1e3
+      data['this work'] = data_import
   nSets = len(os.listdir(inDir))
   logging.debug(data) # shown if --log flag given on command line
   # generate plot using ccsgp.make_plot
   make_plot(
     data = data.values(),
-    properties =  [ 'with points pt 18 ps 0.5 lc %s' % my_color_set[i] for i in xrange(nSets) ],
+    #properties =  [ 'with points pt 18 ps 1.1 lc %s' % my_color_set[i] for i in xrange(nSets) ],
+    properties =  [ 'with points pt 18 ps 2.0 lc %s' % my_color_set[i] for i in [5,6] ],
     titles = data.keys(), # use data keys as legend titles
     name = os.path.join(outDir, prop), #gp_calls = [ 'format y %f' ],
     key = key,
